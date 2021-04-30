@@ -3,5 +3,86 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-  }
+    "@searchkings/ngx-url-form-sync": {
+      "projectType": "library",
+      "root": "projects/searchkings/ngx-url-form-sync",
+      "sourceRoot": "projects/searchkings/ngx-url-form-sync/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/searchkings/ngx-url-form-sync/tsconfig.lib.json",
+            "project": "projects/searchkings/ngx-url-form-sync/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/searchkings/ngx-url-form-sync/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/searchkings/ngx-url-form-sync/src/test.ts",
+            "tsConfig": "projects/searchkings/ngx-url-form-sync/tsconfig.spec.json",
+            "karmaConfig": "projects/searchkings/ngx-url-form-sync/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/searchkings/ngx-url-form-sync/tsconfig.lib.json",
+              "projects/searchkings/ngx-url-form-sync/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "@searchkings/ngx-scroll-tracker": {
+      "projectType": "library",
+      "root": "projects/searchkings/ngx-scroll-tracker",
+      "sourceRoot": "projects/searchkings/ngx-scroll-tracker/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/searchkings/ngx-scroll-tracker/tsconfig.lib.json",
+            "project": "projects/searchkings/ngx-scroll-tracker/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/searchkings/ngx-scroll-tracker/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/searchkings/ngx-scroll-tracker/src/test.ts",
+            "tsConfig": "projects/searchkings/ngx-scroll-tracker/tsconfig.spec.json",
+            "karmaConfig": "projects/searchkings/ngx-scroll-tracker/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/searchkings/ngx-scroll-tracker/tsconfig.lib.json",
+              "projects/searchkings/ngx-scroll-tracker/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "@searchkings/ngx-url-form-sync"
 }
