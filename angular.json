@@ -59,6 +59,5 @@
         }
       }
     }
-  },
-  "defaultProject": "@searchkings/ngx-url-form-sync"
+  }
 }
