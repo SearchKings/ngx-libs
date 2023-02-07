@@ -2,8 +2,8 @@
   "name": "@searchkings/ngx-scroll-tracker",
   "version": "1.0.6",
   "peerDependencies": {
-    "@angular/common": "^11.2.12",
-    "@angular/core": "^11.2.12"
+    "@angular/common": ">= 11 <= 15",
+    "@angular/core": "^>= 11 <= 15"
   },
   "dependencies": {
     "tslib": "^2.0.0"
