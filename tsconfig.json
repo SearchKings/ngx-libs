@@ -7,6 +7,9 @@
         "dist/searchkings/ngx-scroll-tracker/searchkings-ngx-scroll-tracker",
         "dist/searchkings/ngx-scroll-tracker"
       ],
+      "@searchkings/ngx-tel-input": [
+        "dist/searchkings/ngx-tel-input"
+      ],
       "@searchkings/ngx-url-form-sync": [
         "dist/searchkings/ngx-url-form-sync/searchkings-ngx-url-form-sync",
         "dist/searchkings/ngx-url-form-sync"
