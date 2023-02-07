@@ -1,16 +1,11 @@
 import { NgModule } from '@angular/core';
-import { NgxTelInputComponent } from './ngx-tel-input.component';
 
-
+import { NgxTelInputPhoneDirective } from './ngx-tel-input-phone.directive';
+import { NgxTelInputRegionDirective } from './ngx-tel-input-region.directive';
 
 @NgModule({
-  declarations: [
-    NgxTelInputComponent
-  ],
-  imports: [
-  ],
-  exports: [
-    NgxTelInputComponent
-  ]
+  declarations: [NgxTelInputPhoneDirective, NgxTelInputRegionDirective],
+  imports: [],
+  exports: [NgxTelInputPhoneDirective, NgxTelInputRegionDirective],
 })
-export class NgxTelInputModule { }
+export class NgxTelInputModule {}
