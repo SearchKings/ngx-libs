@@ -12,21 +12,23 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "projects/searchkings/ngx-url-form-sync/tsconfig.lib.json",
             "project": "projects/searchkings/ngx-url-form-sync/ng-package.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "projects/searchkings/ngx-url-form-sync/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/searchkings/ngx-url-form-sync/tsconfig.lib.json"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/searchkings/ngx-url-form-sync/src/test.ts",
             "tsConfig": "projects/searchkings/ngx-url-form-sync/tsconfig.spec.json",
-            "karmaConfig": "projects/searchkings/ngx-url-form-sync/karma.conf.js"
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
@@ -40,21 +42,23 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "projects/searchkings/ngx-scroll-tracker/tsconfig.lib.json",
             "project": "projects/searchkings/ngx-scroll-tracker/ng-package.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "projects/searchkings/ngx-scroll-tracker/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/searchkings/ngx-scroll-tracker/tsconfig.lib.json"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/searchkings/ngx-scroll-tracker/src/test.ts",
             "tsConfig": "projects/searchkings/ngx-scroll-tracker/tsconfig.spec.json",
-            "karmaConfig": "projects/searchkings/ngx-scroll-tracker/karma.conf.js"
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
