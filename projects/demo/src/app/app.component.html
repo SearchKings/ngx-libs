@@ -1,15 +1,11 @@
-<form [formGroup]="telForm">
-  <sk-ngx-tel-input>
-    <select skNgxTelInputRegion formControlName="region">
+<sk-ngx-tel-input>
+  <ng-template #controls let-region="regionControl" let-phone="phoneControl">
+    <select [formControl]="region">
+      <option [value]="null">Region</option>
       <option value="CA">Canada</option>
       <option value="US">United States</option>
       <option value="UK">UK</option>
     </select>
-    <input
-      type="text"
-      skNgxTelInputPhone
-      placeholder="Phone"
-      formControlName="phone"
-    />
-  </sk-ngx-tel-input>
-</form>
+    <input type="text" placeholder="Phone" [formControl]="phone" />
+  </ng-template>
+</sk-ngx-tel-input>
