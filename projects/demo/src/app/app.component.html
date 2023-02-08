@@ -1,4 +1,4 @@
-<sk-ngx-tel-input>
+<sk-ngx-tel-input [formControl]="telControl">
   <ng-template #controls let-region="regionControl" let-phone="phoneControl">
     <select [formControl]="region">
       <option [value]="null">Region</option>
@@ -9,3 +9,6 @@
     <input type="text" placeholder="Phone" [formControl]="phone" />
   </ng-template>
 </sk-ngx-tel-input>
+
+<pre>{{ telControl.value || "No phone number parsed yet" }}</pre>
+<pre>{{ (telControl.errors | json) || "No phone errors yet" }}</pre>
