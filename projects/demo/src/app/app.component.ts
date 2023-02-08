@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +10,7 @@ import { FormBuilder } from '@angular/forms';
 export class AppComponent {
   constructor(private fb: FormBuilder) {}
   title = 'demo';
-  // telControl = this.fb.control<string>('+14164517997');
-  telControl = this.fb.control<string>(null);
+  telControl = this.fb.control<string>(null, {
+    validators: Validators.required,
+  });
 }

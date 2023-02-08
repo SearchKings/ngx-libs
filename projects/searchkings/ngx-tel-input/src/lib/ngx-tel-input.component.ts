@@ -12,16 +12,14 @@ import {
   NG_VALUE_ACCESSOR,
   ValidationErrors,
 } from '@angular/forms';
+import { ParsedPhoneNumber, parsePhoneNumber } from 'awesome-phonenumber';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
-
-import { NgxTelInputService } from './ngx-tel-input.service';
 
 @Component({
   selector: 'sk-ngx-tel-input',
   templateUrl: './ngx-tel-input.component.html',
   styleUrls: ['./ngx-tel-input.component.css'],
   providers: [
-    NgxTelInputService,
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => NgxTelInputComponent),
@@ -43,43 +41,55 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
     phone: this.fb.control<string>(null),
   });
 
-  constructor(
-    private fb: FormBuilder,
-    private telService: NgxTelInputService
-  ) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.displayForm.valueChanges
       .pipe(
         startWith(this.displayForm.value),
-        map(({ phone, region }) => this.telService.parseNumber(phone, region)),
+        map(({ phone, region }) => this.parseNumber(phone, region)),
         distinctUntilChanged(
-          (parsedA, parsedB) => parsedA?.number?.e164 === parsedB?.number?.e164
+          (parsedA, parsedB) =>
+            parsedA?.number?.e164 &&
+            parsedB?.number?.e164 &&
+            parsedA.number.e164 === parsedB.number.e164
         )
       )
-      .subscribe((parsed) => {
-        if (parsed.valid) {
+      .subscribe(({ number, valid, regionCode }) => {
+        const { national, e164, input } = number || {};
+
+        if (valid) {
           this.displayForm.patchValue(
             {
-              region: parsed.regionCode,
-              phone: parsed.number.national,
+              region: regionCode,
+              phone: national,
             },
             {
               emitEvent: false,
             }
           );
 
-          this.valueControl.setValue(parsed.number.e164);
+          this.valueControl.setValue(e164);
           this.valueControl.setErrors(null);
-          this.onChange(parsed.number.e164);
+          this.onChange(e164);
         } else {
-          this.valueControl.setValue(null);
+          this.valueControl.setValue(input);
           this.valueControl.setErrors({
             phoneInvalid: true,
           });
-          this.onChange(null);
+          this.onChange(input);
         }
       });
+  }
+
+  parseNumber(val: string, regionCode: string): ParsedPhoneNumber {
+    let pn: ParsedPhoneNumber = parsePhoneNumber(val);
+
+    if (!pn.valid) {
+      pn = parsePhoneNumber(val, { regionCode });
+    }
+
+    return pn;
   }
 
   onChange: (val: string | null) => any = () => {};
@@ -97,7 +107,13 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    isDisabled ? this.displayForm.disable() : this.displayForm.enable();
+    if (isDisabled) {
+      this.displayForm.disable();
+      this.valueControl.disable();
+    } else {
+      this.displayForm.enable();
+      this.valueControl.enable();
+    }
   }
 
   validate(): ValidationErrors {

@@ -1,7 +1,7 @@
 <ng-container
   [ngTemplateOutlet]="controlsTemplate"
   [ngTemplateOutletContext]="{
-    regionControl: displayForm.get('region'),
-    phoneControl: displayForm.get('phone')
+    region: displayForm.controls.region,
+    phone: displayForm.controls.phone
   }"
 ></ng-container>
