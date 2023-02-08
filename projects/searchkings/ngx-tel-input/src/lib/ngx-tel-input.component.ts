@@ -1,11 +1,8 @@
 import {
   Component,
   ContentChild,
-  ContentChildren,
-  ElementRef,
   forwardRef,
   OnInit,
-  QueryList,
   TemplateRef,
 } from '@angular/core';
 import {
@@ -54,12 +51,7 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
     this.displayForm.valueChanges
       .pipe(
         startWith(this.displayForm.value),
-        tap(({ region }) => {
-          if (region) {
-            const { number } = getExample(region, 'mobile');
-            this.placeholder = number.national;
-          }
-        }),
+        tap(({ region }) => this.updatePlaceholder(region)),
         map(({ phone, region }) => this.parseNumber(phone, region)),
         distinctUntilChanged(
           (parsedA, parsedB) =>
@@ -68,31 +60,7 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
             parsedA.number.e164 === parsedB.number.e164
         )
       )
-      .subscribe(({ number, valid, regionCode }) => {
-        const { national, e164, input } = number || {};
-
-        if (valid) {
-          this.displayForm.patchValue(
-            {
-              region: regionCode,
-              phone: national,
-            },
-            {
-              emitEvent: false,
-            }
-          );
-
-          this.valueControl.setValue(e164);
-          this.valueControl.setErrors(null);
-          this.onChange(e164);
-        } else {
-          this.valueControl.setValue(input);
-          this.valueControl.setErrors({
-            phoneInvalid: true,
-          });
-          this.onChange(input);
-        }
-      });
+      .subscribe((parsed) => this.handleParsed(parsed));
   }
 
   parseNumber(val: string, regionCode: string): ParsedPhoneNumber {
@@ -103,6 +71,43 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
     }
 
     return pn;
+  }
+
+  handleParsed({ number, valid, regionCode }: ParsedPhoneNumber) {
+    {
+      const { national, e164, input } = number || {};
+
+      if (valid) {
+        this.displayForm.patchValue(
+          {
+            region: regionCode,
+            phone: national,
+          },
+          {
+            emitEvent: false,
+          }
+        );
+
+        this.valueControl.setValue(e164);
+        this.valueControl.setErrors(null);
+        this.onChange(e164);
+      } else {
+        this.valueControl.setValue(input);
+        this.valueControl.setErrors({
+          phoneInvalid: true,
+        });
+        this.onChange(input);
+      }
+    }
+  }
+
+  updatePlaceholder(region: string) {
+    if (region) {
+      const { number } = getExample(region, 'mobile') || {};
+      this.placeholder = number?.national || '';
+    } else {
+      this.placeholder = '';
+    }
   }
 
   onChange: (val: string | null) => any = () => {};
