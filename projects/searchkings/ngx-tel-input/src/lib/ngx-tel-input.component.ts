@@ -2,8 +2,10 @@ import {
   Component,
   ContentChild,
   forwardRef,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   TemplateRef,
 } from '@angular/core';
 import {
@@ -46,6 +48,8 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
     'national';
   @Input() valueFormat: Exclude<keyof ParsedPhoneNumber['number'], 'input'> =
     'e164';
+  @Output() parsed: EventEmitter<ParsedPhoneNumber> =
+    new EventEmitter<ParsedPhoneNumber>();
   @ContentChild('controls') controlsTemplate: TemplateRef<any>;
   private valueControl = this.fb.control<string>(null);
   public displayForm = this.fb.group({
@@ -68,7 +72,8 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
             parsedB?.number?.[this.valueFormat] &&
             parsedA.number?.[this.valueFormat] ===
               parsedB.number?.[this.valueFormat]
-        )
+        ),
+        tap((parsed) => this.parsed.emit(parsed))
       )
       .subscribe((parsed) => this.handleParsed(parsed));
   }
