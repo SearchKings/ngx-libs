@@ -2,6 +2,7 @@ import {
   Component,
   ContentChild,
   forwardRef,
+  Input,
   OnInit,
   TemplateRef,
 } from '@angular/core';
@@ -37,6 +38,14 @@ import { distinctUntilChanged, map, startWith, tap } from 'rxjs/operators';
   ],
 })
 export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
+  @Input() placeholderFormat: Exclude<
+    keyof ParsedPhoneNumber['number'],
+    'input'
+  > = 'national';
+  @Input() displayFormat: Exclude<keyof ParsedPhoneNumber['number'], 'input'> =
+    'national';
+  @Input() valueFormat: Exclude<keyof ParsedPhoneNumber['number'], 'input'> =
+    'e164';
   @ContentChild('controls') controlsTemplate: TemplateRef<any>;
   private valueControl = this.fb.control<string>(null);
   public displayForm = this.fb.group({
@@ -55,9 +64,10 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
         map(({ phone, region }) => this.parseNumber(phone, region)),
         distinctUntilChanged(
           (parsedA, parsedB) =>
-            parsedA?.number?.e164 &&
-            parsedB?.number?.e164 &&
-            parsedA.number.e164 === parsedB.number.e164
+            parsedA?.number?.[this.valueFormat] &&
+            parsedB?.number?.[this.valueFormat] &&
+            parsedA.number?.[this.valueFormat] ===
+              parsedB.number?.[this.valueFormat]
         )
       )
       .subscribe((parsed) => this.handleParsed(parsed));
@@ -75,22 +85,26 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
 
   handleParsed({ number, valid, regionCode }: ParsedPhoneNumber) {
     {
-      const { national, e164, input } = number || {};
+      const {
+        [this.displayFormat]: displayFormat,
+        input,
+        [this.valueFormat]: valueFormat,
+      } = number || {};
 
       if (valid) {
         this.displayForm.patchValue(
           {
             region: regionCode,
-            phone: national,
+            phone: displayFormat,
           },
           {
             emitEvent: false,
           }
         );
 
-        this.valueControl.setValue(e164);
+        this.valueControl.setValue(valueFormat);
         this.valueControl.setErrors(null);
-        this.onChange(e164);
+        this.onChange(valueFormat);
       } else {
         this.valueControl.setValue(input);
         this.valueControl.setErrors({
@@ -104,7 +118,7 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
   updatePlaceholder(region: string) {
     if (region) {
       const { number } = getExample(region, 'mobile') || {};
-      this.placeholder = number?.national || '';
+      this.placeholder = number?.[this.placeholderFormat] || '';
     } else {
       this.placeholder = '';
     }
