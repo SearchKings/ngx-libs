@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-
 import { FormBuilder, Validators } from '@angular/forms';
+
+import { NgxTelInputService } from '../../../searchkings/ngx-tel-input/src/public-api';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +9,7 @@ import { FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, public telService: NgxTelInputService) {}
   title = 'demo';
   telControl = this.fb.control<string>(null, {
     validators: Validators.required,

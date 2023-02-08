@@ -1,12 +1,25 @@
 <sk-ngx-tel-input [formControl]="telControl">
-  <ng-template #controls let-region="region" let-phone="phone">
+  <ng-template
+    #controls
+    let-region="region"
+    let-phone="phone"
+    let-placeholder="placeholder"
+  >
     <select [formControl]="region">
       <option [value]="null">Region</option>
-      <option value="CA">Canada</option>
-      <option value="US">United States</option>
-      <option value="UK">UK</option>
+      <option
+        [value]="region"
+        *ngFor="let region of telService.getRegionCodes()"
+      >
+        {{ region }}
+      </option>
     </select>
-    <input #phoneInput type="text" placeholder="Phone" [formControl]="phone" />
+    <input
+      type="text"
+      placeholder="Phone"
+      [formControl]="phone"
+      [placeholder]="placeholder"
+    />
   </ng-template>
 </sk-ngx-tel-input>
 

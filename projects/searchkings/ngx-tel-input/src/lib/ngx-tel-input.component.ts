@@ -1,8 +1,11 @@
 import {
   Component,
   ContentChild,
+  ContentChildren,
+  ElementRef,
   forwardRef,
   OnInit,
+  QueryList,
   TemplateRef,
 } from '@angular/core';
 import {
@@ -12,8 +15,12 @@ import {
   NG_VALUE_ACCESSOR,
   ValidationErrors,
 } from '@angular/forms';
-import { ParsedPhoneNumber, parsePhoneNumber } from 'awesome-phonenumber';
-import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import {
+  getExample,
+  ParsedPhoneNumber,
+  parsePhoneNumber,
+} from 'awesome-phonenumber';
+import { distinctUntilChanged, map, startWith, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'sk-ngx-tel-input',
@@ -34,12 +41,12 @@ import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 })
 export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
   @ContentChild('controls') controlsTemplate: TemplateRef<any>;
-
   private valueControl = this.fb.control<string>(null);
   public displayForm = this.fb.group({
     region: this.fb.control<string>('CA'),
     phone: this.fb.control<string>(null),
   });
+  public placeholder: string = '';
 
   constructor(private fb: FormBuilder) {}
 
@@ -47,6 +54,12 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
     this.displayForm.valueChanges
       .pipe(
         startWith(this.displayForm.value),
+        tap(({ region }) => {
+          if (region) {
+            const { number } = getExample(region, 'mobile');
+            this.placeholder = number.national;
+          }
+        }),
         map(({ phone, region }) => this.parseNumber(phone, region)),
         distinctUntilChanged(
           (parsedA, parsedB) =>
