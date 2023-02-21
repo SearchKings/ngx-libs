@@ -1,6 +1,6 @@
 {
   "name": "@searchkings/ngx-tel-input",
-  "version": "1.0.0-8",
+  "version": "1.0.0",
   "peerDependencies": {
     "@angular/common": ">= 12 <= 15",
     "@angular/core": ">= 12 <= 15",
