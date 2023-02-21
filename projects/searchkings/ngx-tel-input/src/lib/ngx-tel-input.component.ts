@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
   TemplateRef,
+  OnDestroy,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -20,7 +21,14 @@ import {
   ParsedPhoneNumber,
   parsePhoneNumber,
 } from 'awesome-phonenumber';
-import { distinctUntilChanged, map, startWith, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import {
+  distinctUntilChanged,
+  map,
+  startWith,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
 
 @Component({
   selector: 'sk-ngx-tel-input',
@@ -39,7 +47,9 @@ import { distinctUntilChanged, map, startWith, tap } from 'rxjs/operators';
     },
   ],
 })
-export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
+export class NgxTelInputComponent
+  implements OnInit, OnDestroy, ControlValueAccessor
+{
   @Input() placeholderFormat: Exclude<
     keyof ParsedPhoneNumber['number'],
     'input'
@@ -48,21 +58,27 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
     'national';
   @Input() valueFormat: Exclude<keyof ParsedPhoneNumber['number'], 'input'> =
     'e164';
+  @Input() defaultRegion: string;
   @Output() parsed: EventEmitter<ParsedPhoneNumber> =
     new EventEmitter<ParsedPhoneNumber>();
   @ContentChild('controls') controlsTemplate: TemplateRef<any>;
-  private valueControl = this.fb.control<string>(null);
   public displayForm = this.fb.group({
-    region: this.fb.control<string>('CA'),
+    region: this.fb.control<string>(null),
     phone: this.fb.control<string>(null),
   });
   public placeholder: string = '';
+  private destroyed$: Subject<void> = new Subject<void>();
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    if (this.defaultRegion) {
+      this.displayForm.controls.region.setValue(this.defaultRegion);
+    }
+
     this.displayForm.valueChanges
       .pipe(
+        tap(() => this.onTouched()),
         startWith(this.displayForm.value),
         tap(({ region }) => this.updatePlaceholder(region)),
         map(({ phone, region }) => this.parseNumber(phone, region)),
@@ -73,7 +89,8 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
             parsedA.number?.[this.valueFormat] ===
               parsedB.number?.[this.valueFormat]
         ),
-        tap((parsed) => this.parsed.emit(parsed))
+        tap((parsed) => this.parsed.emit(parsed)),
+        takeUntil(this.destroyed$)
       )
       .subscribe((parsed) => this.handleParsed(parsed));
   }
@@ -107,12 +124,10 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
           }
         );
 
-        this.valueControl.setValue(valueFormat);
-        this.valueControl.setErrors(null);
+        this.displayForm.controls.phone.setErrors(null);
         this.onChange(valueFormat);
       } else {
-        this.valueControl.setValue(input);
-        this.valueControl.setErrors({
+        this.displayForm.controls.phone.setErrors({
           phoneInvalid: true,
         });
         this.onChange(input);
@@ -144,16 +159,15 @@ export class NgxTelInputComponent implements OnInit, ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    if (isDisabled) {
-      this.displayForm.disable();
-      this.valueControl.disable();
-    } else {
-      this.displayForm.enable();
-      this.valueControl.enable();
-    }
+    isDisabled ? this.displayForm.disable() : this.displayForm.enable();
   }
 
   validate(): ValidationErrors {
-    return this.valueControl.errors;
+    return this.displayForm.controls.phone.errors;
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

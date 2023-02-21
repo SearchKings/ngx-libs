@@ -1,4 +1,4 @@
-<sk-ngx-tel-input [formControl]="telControl">
+<sk-ngx-tel-input [formControl]="telControl" [defaultRegion]="'CA'">
   <ng-template
     #controls
     let-region="region"
@@ -8,10 +8,10 @@
     <select [formControl]="region">
       <option [value]="null">Region</option>
       <option
-        [value]="region"
-        *ngFor="let region of telService.getRegionCodes()"
+        [value]="country.code"
+        *ngFor="let country of telService.getCountries()"
       >
-        {{ region }}
+        {{ country.name }}
       </option>
     </select>
     <input
@@ -23,5 +23,10 @@
   </ng-template>
 </sk-ngx-tel-input>
 
-<pre>{{ telControl.value || "No phone number parsed yet" }}</pre>
-<pre>{{ (telControl.errors | json) || "No phone errors yet" }}</pre>
+<pre>
+  touched: {{ telControl.touched }}
+</pre>
+
+<pre>value: {{ telControl.value || "No phone number parsed yet" }}</pre>
+<pre>errors: {{ (telControl.errors | json) || "No phone errors yet" }}</pre>
+<pre>touched: {{ telControl.touched }}</pre>
