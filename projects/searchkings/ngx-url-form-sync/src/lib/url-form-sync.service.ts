@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -15,7 +15,7 @@ export class UrlFormSyncService {
   constructor(private router: Router) {}
 
   create(
-    formGroup: FormGroup,
+    formGroup: UntypedFormGroup,
     activatedRoute: ActivatedRoute,
     destroySubject$: Subject<any> = new Subject<void>()
   ): UrlFormSyncer {
@@ -36,7 +36,7 @@ export class UrlFormSyncer {
   public formValues$ = this.formValuesSource$.asObservable();
 
   constructor(
-    private formGroup: FormGroup,
+    private formGroup: UntypedFormGroup,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private onDestroy$
