@@ -12,6 +12,10 @@ This package tracks the scroll state when leaving a view and restores it when re
 
 This package keeps URL query params in sync with a reactive form, and vice-versa.
 
+### @searchkings/ngx-tel-input
+
+This package is a headless component that formats and validates telephone input
+
 ## Publishing
 
 See: https://angular.io/guide/creating-libraries#publishing-your-library
